@@ -2,9 +2,9 @@ version: '3.8'
 services:
   db:
     image: postgres:18
-    container_name: meteo-postgres
+    container_name: meteorologia-postgres
     environment:
-      POSTGRES_DB: meteo_db
+      POSTGRES_DB: meteorologia_db
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     ports:
