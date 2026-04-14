@@ -1,6 +1,7 @@
 package com.academia.db.climatempo.controller;
 
 import com.academia.db.climatempo.dto.DadosMeteorologicosRequestDTO;
+import com.academia.db.climatempo.dto.DadosMeteorologicosResponseDTO;
 import com.academia.db.climatempo.model.DadosMeteorologicos;
 import com.academia.db.climatempo.service.DadosMeteorologicosService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,7 +24,7 @@ public class DadosMeteorologicosController {
 
     @PostMapping
     @Operation(summary = "Cadastrar novos dados")
-    public ResponseEntity<DadosMeteorologicos> cadastrar(@RequestBody @Valid DadosMeteorologicosRequestDTO dto) {
+    public ResponseEntity<DadosMeteorologicosResponseDTO> cadastrar(@RequestBody @Valid DadosMeteorologicosRequestDTO dto) {
         var resultado = service.registrar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
     }
