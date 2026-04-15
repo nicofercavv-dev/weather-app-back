@@ -1,9 +1,11 @@
 package com.academia.db.climatempo.dto;
 
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 
 import java.time.LocalDate;
 
+@Builder
 public record DadosMeteorologicosRequestDTO(
         @NotBlank(message = "Nome da cidade é obrigatório")
         String cidade,
