@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 @Builder
 public record DadosMeteorologicosResponseDTO(
+        Long id,
         String cidade,
         LocalDate data,
         String tempoDia,

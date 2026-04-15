@@ -9,6 +9,7 @@ public class DadosMeteorologicosMapper {
 
     public DadosMeteorologicosResponseDTO toResponseDTO(DadosMeteorologicos entidade) {
         return new DadosMeteorologicosResponseDTO(
+                entidade.getId(),
                 entidade.getCidade(),
                 entidade.getDataRegistro(),
                 entidade.getTempoDia().name(),
