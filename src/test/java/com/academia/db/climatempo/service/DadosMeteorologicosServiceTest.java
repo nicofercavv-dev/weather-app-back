@@ -111,4 +111,37 @@ class DadosMeteorologicosServiceTest {
         verify(repository, times(1)).findByCidadeContainingIgnoreCase(cidadeBusca);
         verify(repository, never()).findAll();
     }
+
+    @Test
+    @DisplayName("Deve listar dados dos próximos 7 dias ordenados por data")
+    void deveListarProximosSeteDiasComSucesso() {
+        String cidade = "Açailândia";
+        var entidade1 = new DadosMeteorologicos();
+        entidade1.setDataRegistro(LocalDate.now());
+
+        var entidade2 = new DadosMeteorologicos();
+        entidade2.setDataRegistro(LocalDate.now().plusDays(1));
+
+        var dto1 = DadosMeteorologicosResponseDTO.builder().cidade(cidade).data(LocalDate.now()).build();
+        var dto2 = DadosMeteorologicosResponseDTO.builder().cidade(cidade).data(LocalDate.now().plusDays(1)).build();
+
+        when(repository.findByCidadeContainingIgnoreCaseAndDataRegistroBetweenOrderByDataRegistroAsc(
+                eq(cidade),
+                any(LocalDate.class),
+                any(LocalDate.class)
+        )).thenReturn(List.of(entidade1, entidade2));
+
+        when(mapper.toResponseDTO(entidade1)).thenReturn(dto1);
+        when(mapper.toResponseDTO(entidade2)).thenReturn(dto2);
+
+        List<DadosMeteorologicosResponseDTO> resultado = service.listarProximosSeteDias(cidade);
+
+        assertNotNull(resultado);
+        assertEquals(2, resultado.size());
+        assertEquals(LocalDate.now(), resultado.get(0).data());
+        assertEquals(LocalDate.now().plusDays(1), resultado.get(1).data());
+
+        verify(repository, times(1))
+                .findByCidadeContainingIgnoreCaseAndDataRegistroBetweenOrderByDataRegistroAsc(eq(cidade), any(LocalDate.class), any(LocalDate.class));
+    }
 }

@@ -20,8 +20,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(DadosMeteorologicosController.class)
 class DadosMeteorologicosControllerTest {
@@ -100,5 +99,31 @@ class DadosMeteorologicosControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.cidade").value("Açailândia"));
+    }
+
+    @Test
+    @DisplayName("Deve retornar 200 OK ao buscar previsão de 7 dias")
+    void deveRetornarPrevisaoSeteDias() throws Exception {
+        String cidadeBusca = "Açailândia";
+        var previsao = DadosMeteorologicosResponseDTO.builder().cidade(cidadeBusca).data(LocalDate.now().plusDays(1)).tempoDia("SOL").tempoNoite("LIMPO").temperaturaMaxima(34).temperaturaMinima(24).precipitacao(0).umidade(45).velocidadeDoVento(12).build();
+
+        when(service.listarProximosSeteDias(cidadeBusca)).thenReturn(List.of(previsao));
+
+        mockMvc.perform(get("/dados-meteorologicos/previsao")
+                        .param("cidade", cidadeBusca)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].cidade").value(cidadeBusca))
+                .andExpect(jsonPath("$[0].data").value(LocalDate.now().plusDays(1).toString()))
+                .andExpect(jsonPath("$.length()").value(1));
+    }
+
+    @Test
+    @DisplayName("Deve retornar 400 quando o parâmetro cidade não for enviado na previsão")
+    void deveRetornar400QuandoCidadeAusente() throws Exception {
+        mockMvc.perform(get("/dados-meteorologicos/previsao")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 }

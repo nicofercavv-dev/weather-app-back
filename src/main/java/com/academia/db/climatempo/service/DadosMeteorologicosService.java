@@ -10,6 +10,7 @@ import com.academia.db.climatempo.repository.DadosMeteorologicosRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -36,14 +37,6 @@ public class DadosMeteorologicosService {
         return responseDTO;
     }
 
-    private TempoEnum converterTempo(String valor, String periodo) {
-        try {
-            return TempoEnum.valueOf(valor.toUpperCase());
-        } catch (IllegalArgumentException | NullPointerException e) {
-            throw new BusinessException("Condição climática de " + periodo + " inválida: " + valor);
-        }
-    }
-
     public List<DadosMeteorologicosResponseDTO> listar(String cidade) {
         List<DadosMeteorologicos> entidades;
 
@@ -56,5 +49,28 @@ public class DadosMeteorologicosService {
         return entidades.stream()
                 .map(mapper::toResponseDTO)
                 .toList();
+    }
+
+    public List<DadosMeteorologicosResponseDTO> listarProximosSeteDias(String cidade) {
+        LocalDate hoje = LocalDate.now();
+        LocalDate limite = hoje.plusDays(7);
+
+        List<DadosMeteorologicos> entidades = repository.findByCidadeContainingIgnoreCaseAndDataRegistroBetweenOrderByDataRegistroAsc(
+                cidade,
+                hoje,
+                limite
+        );
+
+        return entidades.stream()
+                .map(mapper::toResponseDTO)
+                .toList();
+    }
+
+    private TempoEnum converterTempo(String valor, String periodo) {
+        try {
+            return TempoEnum.valueOf(valor.toUpperCase());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            throw new BusinessException("Condição climática de " + periodo + " inválida: " + valor);
+        }
     }
 }

@@ -2,7 +2,6 @@ package com.academia.db.climatempo.controller;
 
 import com.academia.db.climatempo.dto.DadosMeteorologicosRequestDTO;
 import com.academia.db.climatempo.dto.DadosMeteorologicosResponseDTO;
-import com.academia.db.climatempo.model.DadosMeteorologicos;
 import com.academia.db.climatempo.service.DadosMeteorologicosService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,6 +31,15 @@ public class DadosMeteorologicosController {
     @Operation(summary = "Listar dados meteorológicos")
     public ResponseEntity<List<DadosMeteorologicosResponseDTO>> listar(@RequestParam(value = "cidade", required = false) String cidade) {
         List<DadosMeteorologicosResponseDTO> resultado = service.listar(cidade);
+        return ResponseEntity.status(HttpStatus.OK).body(resultado);
+    }
+
+    @GetMapping("/previsao")
+    @Operation(summary = "Listar dados meteorológicos de uma cidade para os próximos 7 dias")
+    public ResponseEntity<List<DadosMeteorologicosResponseDTO>> listarProximosDias(
+            @RequestParam(value = "cidade") String cidade) {
+
+        List<DadosMeteorologicosResponseDTO> resultado = service.listarProximosSeteDias(cidade);
         return ResponseEntity.status(HttpStatus.OK).body(resultado);
     }
 }
