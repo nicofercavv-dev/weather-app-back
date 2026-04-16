@@ -3,6 +3,7 @@ package com.academia.db.climatempo.service;
 import com.academia.db.climatempo.dto.DadosMeteorologicosRequestDTO;
 import com.academia.db.climatempo.dto.DadosMeteorologicosResponseDTO;
 import com.academia.db.climatempo.mapper.DadosMeteorologicosMapper;
+import com.academia.db.climatempo.exception.BusinessException;
 import com.academia.db.climatempo.model.DadosMeteorologicos;
 import com.academia.db.climatempo.repository.DadosMeteorologicosRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -43,16 +44,30 @@ class DadosMeteorologicosServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar BusinessException quando enum não existir")
-    void deveLancarErroAoDuplicarRegistro() {
-        LocalDate localDateMock = LocalDate.of(2026,04,07);
-        var dto = new DadosMeteorologicosRequestDTO("Cidade Teste", localDateMock, "NEVE_COM_SOL", "CHUVA", 40, 28, 10, 50, 4);
+    @DisplayName("Deve lançar BusinessException quando o tempo informado for inválido")
+    void deveLancarErroAoInformarTempoInvalido() {
+        DadosMeteorologicosRequestDTO dto = DadosMeteorologicosRequestDTO.builder().cidade("Açailândia").data(LocalDate.now()).tempoDia("VALOR_INEXISTENTE").tempoNoite("CHUVA").temperaturaMaxima(28).temperaturaMinima(19).precipitacao(80).umidade(80).velocidadeDoVento(13).build();
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        BusinessException exception = assertThrows(BusinessException.class, () -> {
             service.registrar(dto);
         });
 
-        assertEquals("No enum constant com.academia.db.climatempo.model.TempoEnum.NEVE_COM_SOL", exception.getMessage());
+        assertTrue(exception.getMessage().contains("Condição climática de dia inválida"));
+
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Deve lançar BusinessException quando enum não existir")
+    void deveLancarErroQuandoEnumNaoExistir() {
+        LocalDate localDateMock = LocalDate.of(2026,04,07);
+        var dto = new DadosMeteorologicosRequestDTO("Cidade Teste", localDateMock, "NEVE_COM_SOL", "CHUVA", 40, 28, 10, 50, 4);
+
+        BusinessException exception = assertThrows(BusinessException.class, () -> {
+            service.registrar(dto);
+        });
+
+        assertEquals("Condição climática de dia inválida: NEVE_COM_SOL", exception.getMessage());
 
         verify(repository, never()).save(any());
     }
@@ -63,9 +78,7 @@ class DadosMeteorologicosServiceTest {
         var entidade = new DadosMeteorologicos();
         entidade.setCidade("São Paulo");
 
-        var responseDTO = new DadosMeteorologicosResponseDTO(
-                "São Paulo", LocalDate.now(), "SOL", "LIMPO", 30, 20, 0, 50, 10
-        );
+        var responseDTO = DadosMeteorologicosResponseDTO.builder().id(34L).cidade("São Paulo").data(LocalDate.now()).tempoDia("SOL").tempoNoite("LIMPO").temperaturaMaxima(30).temperaturaMinima(20).precipitacao(0).umidade(50).velocidadeDoVento(10).build();
 
         when(repository.findAll()).thenReturn(List.of(entidade));
         when(mapper.toResponseDTO(entidade)).thenReturn(responseDTO);
@@ -86,9 +99,7 @@ class DadosMeteorologicosServiceTest {
         var entidade = new DadosMeteorologicos();
         entidade.setCidade(cidadeBusca);
 
-        var responseDTO = new DadosMeteorologicosResponseDTO(
-                cidadeBusca, LocalDate.now(), "SOL", "LIMPO", 30, 20, 0, 50, 10
-        );
+        var responseDTO = DadosMeteorologicosResponseDTO.builder().id(34L).cidade(cidadeBusca).data(LocalDate.now()).tempoDia("SOL").tempoNoite("LIMPO").temperaturaMaxima(30).temperaturaMinima(20).precipitacao(0).umidade(50).velocidadeDoVento(10).build();
 
         when(repository.findByCidadeContainingIgnoreCase(cidadeBusca)).thenReturn(List.of(entidade));
         when(mapper.toResponseDTO(entidade)).thenReturn(responseDTO);

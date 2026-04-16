@@ -22,8 +22,8 @@ public class DadosMeteorologicosController {
     private final DadosMeteorologicosService service;
 
     @PostMapping
-    @Operation(summary = "Cadastrar novos dados meteorológicos")
-    public ResponseEntity<DadosMeteorologicos> cadastrar(@RequestBody @Valid DadosMeteorologicosRequestDTO dto) {
+    @Operation(summary = "Cadastrar novos dados")
+    public ResponseEntity<DadosMeteorologicosResponseDTO> cadastrar(@RequestBody @Valid DadosMeteorologicosRequestDTO dto) {
         var resultado = service.registrar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
     }

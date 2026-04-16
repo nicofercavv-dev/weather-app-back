@@ -1,8 +1,12 @@
 package com.academia.db.climatempo.dto;
 
+import lombok.Builder;
+
 import java.time.LocalDate;
 
+@Builder
 public record DadosMeteorologicosResponseDTO(
+        Long id,
         String cidade,
         LocalDate data,
         String tempoDia,
