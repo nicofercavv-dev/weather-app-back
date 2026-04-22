@@ -42,4 +42,19 @@ public class DadosMeteorologicosController {
         List<DadosMeteorologicosResponseDTO> resultado = service.listarProximosSeteDias(cidade);
         return ResponseEntity.status(HttpStatus.OK).body(resultado);
     }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Editar dados meteorológicos existentes de uma cidade")
+    public ResponseEntity<DadosMeteorologicosResponseDTO> editar(@PathVariable Long id, @RequestBody DadosMeteorologicosRequestDTO dto) {
+
+        var resultado = service.editar(id, dto);
+        return ResponseEntity.status(HttpStatus.OK).body(resultado);
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Excluir um dado meteorológico")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        service.deletar(id);
+        return ResponseEntity.noContent().build();
+    }
 }

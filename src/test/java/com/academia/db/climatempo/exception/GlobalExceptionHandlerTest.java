@@ -88,4 +88,14 @@ class GlobalExceptionHandlerTest {
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value(containsString("cidade")));
     }
+
+    @Test
+    @DisplayName("Deve retornar 404 quando a rota não existe")
+    void deveTratarNoHandlerFoundException() throws Exception {
+        mockMvc.perform(get("/rota-que-nao-existe-mesmo")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.message").value(containsString("A rota /rota-que-nao-existe-mesmo não foi encontrada")));
+    }
 }

@@ -2,6 +2,7 @@ package com.academia.db.climatempo.service;
 
 import com.academia.db.climatempo.dto.DadosMeteorologicosRequestDTO;
 import com.academia.db.climatempo.dto.DadosMeteorologicosResponseDTO;
+import com.academia.db.climatempo.exception.ResourceNotFoundException;
 import com.academia.db.climatempo.mapper.DadosMeteorologicosMapper;
 import com.academia.db.climatempo.exception.BusinessException;
 import com.academia.db.climatempo.model.DadosMeteorologicos;
@@ -64,6 +65,31 @@ public class DadosMeteorologicosService {
         return entidades.stream()
                 .map(mapper::toResponseDTO)
                 .toList();
+    }
+
+    public DadosMeteorologicosResponseDTO editar(Long id, DadosMeteorologicosRequestDTO dto) {
+        DadosMeteorologicos entity = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Registro não encontrado com o ID: " + id));
+
+        entity.setCidade(dto.cidade());
+        entity.setDataRegistro(dto.data());
+        entity.setTempoDia(converterTempo(dto.tempoDia(), "dia"));
+        entity.setTempoNoite(converterTempo(dto.tempoNoite(), "noite"));
+        entity.setTemperaturaMaxima(dto.temperaturaMaxima());
+        entity.setTemperaturaMinima(dto.temperaturaMinima());
+        entity.setPrecipitacao(dto.precipitacao());
+        entity.setUmidade(dto.umidade());
+        entity.setVelocidadeVento(dto.velocidadeDoVento());
+
+        DadosMeteorologicos atualizado = repository.save(entity);
+        return mapper.toResponseDTO(atualizado);
+    }
+
+    public void deletar(Long id) {
+        if (!repository.existsById(id)) {
+            throw new ResourceNotFoundException("Não é possível deletar: ID " + id + " não encontrado.");
+        }
+        repository.deleteById(id);
     }
 
     private TempoEnum converterTempo(String valor, String periodo) {

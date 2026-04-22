@@ -16,10 +16,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(DadosMeteorologicosController.class)
@@ -125,5 +126,30 @@ class DadosMeteorologicosControllerTest {
         mockMvc.perform(get("/dados-meteorologicos/previsao")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 200 ao editar registro")
+    void deveRetornar200AoEditar() throws Exception {
+        Long id = 1L;
+        var dto = new DadosMeteorologicosRequestDTO("Açailândia", LocalDate.now(), "SOL", "LIMPO", 35, 20, 0, 50, 10);
+
+        when(service.editar(eq(id), any())).thenReturn(new DadosMeteorologicosResponseDTO(1L,"Açailândia", LocalDate.now(), "SOL", "LIMPO", 35, 20, 0, 50, 10));
+
+        mockMvc.perform(put("/dados-meteorologicos/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 204 ao deletar registro")
+    void deveRetornar204AoDeletar() throws Exception {
+        Long id = 1L;
+
+        doNothing().when(service).deletar(id);
+
+        mockMvc.perform(delete("/dados-meteorologicos/{id}", id))
+                .andExpect(status().isNoContent());
     }
 }
