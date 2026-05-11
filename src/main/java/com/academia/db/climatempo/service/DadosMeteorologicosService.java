@@ -9,6 +9,8 @@ import com.academia.db.climatempo.model.DadosMeteorologicos;
 import com.academia.db.climatempo.model.TempoEnum;
 import com.academia.db.climatempo.repository.DadosMeteorologicosRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -38,18 +40,16 @@ public class DadosMeteorologicosService {
         return responseDTO;
     }
 
-    public List<DadosMeteorologicosResponseDTO> listar(String cidade) {
-        List<DadosMeteorologicos> entidades;
+    public Page<DadosMeteorologicosResponseDTO> listar(String cidade, Pageable pageable) {
+        Page<DadosMeteorologicos> entidades;
 
         if (cidade != null && !cidade.isBlank()) {
-            entidades = repository.findByCidadeContainingIgnoreCase(cidade);
+            entidades = repository.findByCidadeContainingIgnoreCase(cidade, pageable);
         } else {
-            entidades = repository.findAll();
+            entidades = repository.findAll(pageable);
         }
 
-        return entidades.stream()
-                .map(mapper::toResponseDTO)
-                .toList();
+        return entidades.map(mapper::toResponseDTO);
     }
 
     public List<DadosMeteorologicosResponseDTO> listarProximosSeteDias(String cidade) {

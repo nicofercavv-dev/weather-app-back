@@ -1,7 +1,6 @@
 package com.academia.db.climatempo.model;
 
 public enum TempoEnum {
-    SOL,
     LIMPO,
     CHUVA,
     TEMPESTADE,

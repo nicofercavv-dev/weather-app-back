@@ -13,6 +13,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -77,61 +81,68 @@ class DadosMeteorologicosServiceTest {
     @Test
     @DisplayName("Deve retornar todos os registros quando cidade for nula")
     void deveRetornarTodosQuandoCidadeForNula() {
+        Pageable pageable = PageRequest.of(0, 10);
         var entidade = new DadosMeteorologicos();
         entidade.setCidade("São Paulo");
 
         var responseDTO = DadosMeteorologicosResponseDTO.builder().id(34L).cidade("São Paulo").data(LocalDate.now()).tempoDia("SOL").tempoNoite("LIMPO").temperaturaMaxima(30).temperaturaMinima(20).precipitacao(0).umidade(50).velocidadeDoVento(10).build();
 
-        when(repository.findAll()).thenReturn(List.of(entidade));
+        Page<DadosMeteorologicos> pageEntidades = new PageImpl<>(List.of(entidade));
+
+        when(repository.findAll(pageable)).thenReturn(pageEntidades);
         when(mapper.toResponseDTO(entidade)).thenReturn(responseDTO);
 
-        var resultado = service.listar(null);
+        var resultado = service.listar(null, pageable);
 
         assertFalse(resultado.isEmpty());
-        assertEquals(1, resultado.size());
-        assertEquals("São Paulo", resultado.get(0).cidade());
-        verify(repository, times(1)).findAll();
-        verify(repository, never()).findByCidadeContainingIgnoreCase(anyString());
+        assertEquals(1, resultado.getTotalElements());
+        assertEquals("São Paulo", resultado.getContent().get(0).cidade());
+        verify(repository, times(1)).findAll(pageable);
+        verify(repository, never()).findByCidadeContainingIgnoreCase(anyString(), any(Pageable.class));
     }
 
     @Test
     @DisplayName("Deve retornar todos os registros quando cidade for vazia")
     void deveRetornarTodosQuandoCidadeForVazia() {
+        Pageable pageable = PageRequest.of(0, 10);
         var entidade = new DadosMeteorologicos();
         entidade.setCidade("São Paulo");
 
         var responseDTO = DadosMeteorologicosResponseDTO.builder().id(34L).cidade("São Paulo").data(LocalDate.now()).tempoDia("SOL").tempoNoite("LIMPO").temperaturaMaxima(30).temperaturaMinima(20).precipitacao(0).umidade(50).velocidadeDoVento(10).build();
 
-        when(repository.findAll()).thenReturn(List.of(entidade));
+        Page<DadosMeteorologicos> pageEntidades = new PageImpl<>(List.of(entidade));
+        when(repository.findAll(pageable)).thenReturn(pageEntidades);
         when(mapper.toResponseDTO(entidade)).thenReturn(responseDTO);
 
-        var resultado = service.listar("");
+        var resultado = service.listar("", pageable);
 
         assertFalse(resultado.isEmpty());
-        assertEquals(1, resultado.size());
-        assertEquals("São Paulo", resultado.get(0).cidade());
-        verify(repository, times(1)).findAll();
-        verify(repository, never()).findByCidadeContainingIgnoreCase(anyString());
+        assertEquals(1, resultado.getTotalElements());
+        assertEquals("São Paulo", resultado.getContent().get(0).cidade());
+        verify(repository, times(1)).findAll(pageable);
+        verify(repository, never()).findByCidadeContainingIgnoreCase(anyString(), any(Pageable.class));
     }
 
     @Test
     @DisplayName("Deve filtrar por cidade quando o parâmetro for informado")
     void deveFiltrarPorCidade() {
         String cidadeBusca = "Açailândia";
+        Pageable pageable = PageRequest.of(0, 10);
         var entidade = new DadosMeteorologicos();
         entidade.setCidade(cidadeBusca);
 
         var responseDTO = DadosMeteorologicosResponseDTO.builder().id(34L).cidade(cidadeBusca).data(LocalDate.now()).tempoDia("SOL").tempoNoite("LIMPO").temperaturaMaxima(30).temperaturaMinima(20).precipitacao(0).umidade(50).velocidadeDoVento(10).build();
 
-        when(repository.findByCidadeContainingIgnoreCase(cidadeBusca)).thenReturn(List.of(entidade));
+        Page<DadosMeteorologicos> pageEntidades = new PageImpl<>(List.of(entidade));
+        when(repository.findByCidadeContainingIgnoreCase(cidadeBusca, pageable)).thenReturn(pageEntidades);
         when(mapper.toResponseDTO(entidade)).thenReturn(responseDTO);
 
-        var resultado = service.listar(cidadeBusca);
+        var resultado = service.listar(cidadeBusca, pageable);
 
-        assertEquals(1, resultado.size());
-        assertEquals(cidadeBusca, resultado.get(0).cidade());
-        verify(repository, times(1)).findByCidadeContainingIgnoreCase(cidadeBusca);
-        verify(repository, never()).findAll();
+        assertEquals(1, resultado.getTotalElements());
+        assertEquals(cidadeBusca, resultado.getContent().get(0).cidade());
+        verify(repository, times(1)).findByCidadeContainingIgnoreCase(cidadeBusca, pageable);
+        verify(repository, never()).findAll(pageable);
     }
 
     @Test

@@ -7,13 +7,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -31,7 +32,7 @@ class GlobalExceptionHandlerTest {
     @Test
     @DisplayName("Deve tratar ResourceNotFoundException e retornar 404")
     void deveTratarResourceNotFound() throws Exception {
-        when(service.listar(anyString())).thenThrow(new ResourceNotFoundException("Registro não encontrado"));
+        when(service.listar(anyString(), any(Pageable.class))).thenThrow(new ResourceNotFoundException("Registro não encontrado"));
 
         mockMvc.perform(get("/dados-meteorologicos")
                         .param("cidade", "Qualquer"))
@@ -72,7 +73,8 @@ class GlobalExceptionHandlerTest {
     @Test
     @DisplayName("Deve tratar exceções genéricas e retornar 500")
     void deveTratarExceptionGenerica() throws Exception {
-        when(service.listar(null)).thenThrow(new RuntimeException("Erro interno imprevisto"));
+        Pageable pageable = PageRequest.of(0, 10);
+        when(service.listar(isNull(), any(Pageable.class))).thenThrow(new RuntimeException("Erro interno imprevisto"));
 
         mockMvc.perform(get("/dados-meteorologicos"))
                 .andExpect(status().isInternalServerError())

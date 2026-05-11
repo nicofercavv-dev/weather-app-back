@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +31,8 @@ public class DadosMeteorologicosController {
 
     @GetMapping
     @Operation(summary = "Listar dados meteorológicos")
-    public ResponseEntity<List<DadosMeteorologicosResponseDTO>> listar(@RequestParam(value = "cidade", required = false) String cidade) {
-        List<DadosMeteorologicosResponseDTO> resultado = service.listar(cidade);
+    public ResponseEntity<Page<DadosMeteorologicosResponseDTO>> listar(@RequestParam(value = "cidade", required = false) String cidade, Pageable pageable) {
+        Page<DadosMeteorologicosResponseDTO> resultado = service.listar(cidade, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(resultado);
     }
 

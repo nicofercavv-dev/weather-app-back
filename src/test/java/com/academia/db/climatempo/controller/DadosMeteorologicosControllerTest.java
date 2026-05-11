@@ -8,6 +8,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -56,14 +59,19 @@ class DadosMeteorologicosControllerTest {
     void deveRetornarStatus200AoListar() throws Exception {
         var response = DadosMeteorologicosResponseDTO.builder().id(23L).cidade("Açailândia").data(LocalDate.now()).tempoDia("SOL").tempoNoite("LIMPO").temperaturaMaxima(35).temperaturaMinima(20).precipitacao(0).umidade(40).velocidadeDoVento(15).build();
 
-        when(service.listar("Açailândia")).thenReturn(List.of(response));
+        Page<DadosMeteorologicosResponseDTO> page = new PageImpl<>(List.of(response));
+
+        when(service.listar(eq("Açailândia"), any(Pageable.class))).thenReturn(page);
 
         mockMvc.perform(get("/dados-meteorologicos")
                         .param("cidade", "Açailândia")
+                        .param("page", "0")
+                        .param("size", "10")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].cidade").value("Açailândia"))
-                .andExpect(jsonPath("$[0].temperaturaMaxima").value(35));
+                .andExpect(jsonPath("$.content[0].cidade").value("Açailândia"))
+                .andExpect(jsonPath("$.content[0].temperaturaMaxima").value(35))
+                .andExpect(jsonPath("$.totalElements").value(1));
     }
 
     @Test
