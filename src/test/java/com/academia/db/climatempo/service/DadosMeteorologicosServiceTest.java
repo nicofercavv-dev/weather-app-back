@@ -41,7 +41,7 @@ class DadosMeteorologicosServiceTest {
     @DisplayName("Deve salvar os dados meteorológicos com sucesso")
     void deveSalvarComSucesso() {
         var dto = new DadosMeteorologicosRequestDTO(
-                "Açailândia", LocalDate.of(2026, 4, 7), "SOL", "CHUVA", 40, 10, 5, 30, 20
+                "Açailândia", LocalDate.of(2026, 4, 7), "LIMPO", "CHUVA", 40, 10, 5, 30, 20
         );
 
         service.registrar(dto);
@@ -85,7 +85,7 @@ class DadosMeteorologicosServiceTest {
         var entidade = new DadosMeteorologicos();
         entidade.setCidade("São Paulo");
 
-        var responseDTO = DadosMeteorologicosResponseDTO.builder().id(34L).cidade("São Paulo").data(LocalDate.now()).tempoDia("SOL").tempoNoite("LIMPO").temperaturaMaxima(30).temperaturaMinima(20).precipitacao(0).umidade(50).velocidadeDoVento(10).build();
+        var responseDTO = DadosMeteorologicosResponseDTO.builder().id(34L).cidade("São Paulo").data(LocalDate.now()).tempoDia("NUBLADO").tempoNoite("LIMPO").temperaturaMaxima(30).temperaturaMinima(20).precipitacao(0).umidade(50).velocidadeDoVento(10).build();
 
         Page<DadosMeteorologicos> pageEntidades = new PageImpl<>(List.of(entidade));
 
@@ -108,7 +108,7 @@ class DadosMeteorologicosServiceTest {
         var entidade = new DadosMeteorologicos();
         entidade.setCidade("São Paulo");
 
-        var responseDTO = DadosMeteorologicosResponseDTO.builder().id(34L).cidade("São Paulo").data(LocalDate.now()).tempoDia("SOL").tempoNoite("LIMPO").temperaturaMaxima(30).temperaturaMinima(20).precipitacao(0).umidade(50).velocidadeDoVento(10).build();
+        var responseDTO = DadosMeteorologicosResponseDTO.builder().id(34L).cidade("São Paulo").data(LocalDate.now()).tempoDia("NUBLADO").tempoNoite("LIMPO").temperaturaMaxima(30).temperaturaMinima(20).precipitacao(0).umidade(50).velocidadeDoVento(10).build();
 
         Page<DadosMeteorologicos> pageEntidades = new PageImpl<>(List.of(entidade));
         when(repository.findAll(pageable)).thenReturn(pageEntidades);
@@ -131,7 +131,7 @@ class DadosMeteorologicosServiceTest {
         var entidade = new DadosMeteorologicos();
         entidade.setCidade(cidadeBusca);
 
-        var responseDTO = DadosMeteorologicosResponseDTO.builder().id(34L).cidade(cidadeBusca).data(LocalDate.now()).tempoDia("SOL").tempoNoite("LIMPO").temperaturaMaxima(30).temperaturaMinima(20).precipitacao(0).umidade(50).velocidadeDoVento(10).build();
+        var responseDTO = DadosMeteorologicosResponseDTO.builder().id(34L).cidade(cidadeBusca).data(LocalDate.now()).tempoDia("NUBLADO").tempoNoite("LIMPO").temperaturaMaxima(30).temperaturaMinima(20).precipitacao(0).umidade(50).velocidadeDoVento(10).build();
 
         Page<DadosMeteorologicos> pageEntidades = new PageImpl<>(List.of(entidade));
         when(repository.findByCidadeContainingIgnoreCase(cidadeBusca, pageable)).thenReturn(pageEntidades);
@@ -182,13 +182,13 @@ class DadosMeteorologicosServiceTest {
     @DisplayName("Deve atualizar dados meteorológicos com sucesso")
     void deveAtualizarDadosComSucesso() {
         Long id = 1L;
-        var request = new DadosMeteorologicosRequestDTO("Açailândia", LocalDate.now(), "SOL", "LIMPO", 35, 20, 0, 50, 10);
+        var request = new DadosMeteorologicosRequestDTO("Açailândia", LocalDate.now(), "NUBLADO", "LIMPO", 35, 20, 0, 50, 10);
         var entidadeExistente = new DadosMeteorologicos();
         entidadeExistente.setId(id);
 
         when(repository.findById(id)).thenReturn(Optional.of(entidadeExistente));
         when(repository.save(any(DadosMeteorologicos.class))).thenReturn(entidadeExistente);
-        when(mapper.toResponseDTO(any())).thenReturn(new DadosMeteorologicosResponseDTO(1L,"Açailândia", LocalDate.now(), "SOL", "LIMPO", 35, 20, 0, 50, 10));
+        when(mapper.toResponseDTO(any())).thenReturn(new DadosMeteorologicosResponseDTO(1L,"Açailândia", LocalDate.now(), "NUBLADO", "LIMPO", 35, 20, 0, 50, 10));
 
         var resultado = service.editar(id, request);
 
@@ -201,7 +201,7 @@ class DadosMeteorologicosServiceTest {
     void deveLancarErroAoEditarInexistente() {
         Long idInexistente = 99L;
         var request = new DadosMeteorologicosRequestDTO(
-                "Açailândia", LocalDate.now(), "SOL", "LIMPO", 35, 20, 0, 50, 10
+                "Açailândia", LocalDate.now(), "NUBLADO", "LIMPO", 35, 20, 0, 50, 10
         );
 
         when(repository.findById(idInexistente)).thenReturn(Optional.empty());

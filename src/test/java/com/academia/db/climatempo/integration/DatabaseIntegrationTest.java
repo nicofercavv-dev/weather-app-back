@@ -30,7 +30,7 @@ public class DatabaseIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void devePersistirDadosMeteorologicos() {
-        DadosMeteorologicos entity = DadosMeteorologicos.builder().cidade("Rio de Janeiro").dataRegistro(LocalDate.now()).tempoDia(TempoEnum.SOL).tempoNoite(TempoEnum.CHUVA).temperaturaMaxima(37).temperaturaMinima(23).precipitacao(80).umidade(78).velocidadeVento(12).build();
+        DadosMeteorologicos entity = DadosMeteorologicos.builder().cidade("Rio de Janeiro").dataRegistro(LocalDate.now()).tempoDia(TempoEnum.LIMPO).tempoNoite(TempoEnum.CHUVA).temperaturaMaxima(37).temperaturaMinima(23).precipitacao(80).umidade(78).velocidadeVento(12).build();
         DadosMeteorologicos salvo = dadosMeteorologicosRepository.save(entity);
 
         assertThat(salvo.getId()).isNotNull();
@@ -38,6 +38,6 @@ public class DatabaseIntegrationTest extends AbstractIntegrationTest {
         Optional<DadosMeteorologicos> buscado = dadosMeteorologicosRepository.findById(salvo.getId());
         assertThat(buscado).isPresent();
         assertThat(buscado.get().getCidade()).isEqualTo("Rio de Janeiro");
-        assertThat(buscado.get().getTempoDia()).isEqualTo(TempoEnum.SOL);
+        assertThat(buscado.get().getTempoDia()).isEqualTo(TempoEnum.LIMPO);
     }
 }

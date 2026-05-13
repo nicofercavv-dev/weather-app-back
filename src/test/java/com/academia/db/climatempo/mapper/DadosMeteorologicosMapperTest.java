@@ -27,11 +27,11 @@ public class DadosMeteorologicosMapperTest {
         entidade.setId(1L);
         entidade.setCidade("Açailândia");
         entidade.setDataRegistro(LocalDate.of(2026, 4, 20));
-        entidade.setTempoDia(TempoEnum.SOL);
+        entidade.setTempoDia(TempoEnum.CHUVA);
         entidade.setTempoNoite(TempoEnum.LIMPO);
         entidade.setTemperaturaMaxima(32);
         entidade.setTemperaturaMinima(23);
-        entidade.setPrecipitacao(10);
+        entidade.setPrecipitacao(70);
         entidade.setUmidade(60);
         entidade.setVelocidadeVento(15);
 
@@ -41,7 +41,7 @@ public class DadosMeteorologicosMapperTest {
         assertEquals(entidade.getId(), dto.id());
         assertEquals(entidade.getCidade(), dto.cidade());
         assertEquals(entidade.getDataRegistro(), dto.data());
-        assertEquals("SOL", dto.tempoDia());
+        assertEquals("CHUVA", dto.tempoDia());
         assertEquals("LIMPO", dto.tempoNoite());
         assertEquals(entidade.getTemperaturaMaxima(), dto.temperaturaMaxima());
         assertEquals(entidade.getTemperaturaMinima(), dto.temperaturaMinima());

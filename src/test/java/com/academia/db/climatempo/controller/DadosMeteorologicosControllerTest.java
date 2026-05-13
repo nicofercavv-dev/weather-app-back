@@ -57,7 +57,7 @@ class DadosMeteorologicosControllerTest {
     @Test
     @DisplayName("Deve retornar 200 OK ao listar dados meteorológicos")
     void deveRetornarStatus200AoListar() throws Exception {
-        var response = DadosMeteorologicosResponseDTO.builder().id(23L).cidade("Açailândia").data(LocalDate.now()).tempoDia("SOL").tempoNoite("LIMPO").temperaturaMaxima(35).temperaturaMinima(20).precipitacao(0).umidade(40).velocidadeDoVento(15).build();
+        var response = DadosMeteorologicosResponseDTO.builder().id(23L).cidade("Açailândia").data(LocalDate.now()).tempoDia("CHUVA").tempoNoite("LIMPO").temperaturaMaxima(35).temperaturaMinima(20).precipitacao(70).umidade(40).velocidadeDoVento(15).build();
 
         Page<DadosMeteorologicosResponseDTO> page = new PageImpl<>(List.of(response));
 
@@ -92,7 +92,7 @@ class DadosMeteorologicosControllerTest {
         var requestDTO = new DadosMeteorologicosRequestDTO(
                 "Açailândia",
                 LocalDate.of(2026, 4, 10),
-                "SOL",
+                "NUBLADO",
                 "LIMPO",
                 35, 22, 0, 50, 10
         );
@@ -114,7 +114,7 @@ class DadosMeteorologicosControllerTest {
     @DisplayName("Deve retornar 200 OK ao buscar previsão de 7 dias")
     void deveRetornarPrevisaoSeteDias() throws Exception {
         String cidadeBusca = "Açailândia";
-        var previsao = DadosMeteorologicosResponseDTO.builder().cidade(cidadeBusca).data(LocalDate.now().plusDays(1)).tempoDia("SOL").tempoNoite("LIMPO").temperaturaMaxima(34).temperaturaMinima(24).precipitacao(0).umidade(45).velocidadeDoVento(12).build();
+        var previsao = DadosMeteorologicosResponseDTO.builder().cidade(cidadeBusca).data(LocalDate.now().plusDays(1)).tempoDia("LIMPO").tempoNoite("LIMPO").temperaturaMaxima(34).temperaturaMinima(24).precipitacao(0).umidade(45).velocidadeDoVento(12).build();
 
         when(service.listarProximosSeteDias(cidadeBusca)).thenReturn(List.of(previsao));
 
@@ -140,9 +140,9 @@ class DadosMeteorologicosControllerTest {
     @DisplayName("Deve retornar 200 ao editar registro")
     void deveRetornar200AoEditar() throws Exception {
         Long id = 1L;
-        var dto = new DadosMeteorologicosRequestDTO("Açailândia", LocalDate.now(), "SOL", "LIMPO", 35, 20, 0, 50, 10);
+        var dto = new DadosMeteorologicosRequestDTO("Açailândia", LocalDate.now(), "CHUVA", "LIMPO", 35, 20, 80, 50, 10);
 
-        when(service.editar(eq(id), any())).thenReturn(new DadosMeteorologicosResponseDTO(1L,"Açailândia", LocalDate.now(), "SOL", "LIMPO", 35, 20, 0, 50, 10));
+        when(service.editar(eq(id), any())).thenReturn(new DadosMeteorologicosResponseDTO(1L,"Açailândia", LocalDate.now(), "CHUVA", "LIMPO", 35, 20, 80, 50, 10));
 
         mockMvc.perform(put("/dados-meteorologicos/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)

@@ -57,7 +57,7 @@ class GlobalExceptionHandlerTest {
                             "cidade": "Açailândia",
                             "data": "2026-04-16",
                             "tempoDia": "CHUVA_NEVE",
-                            "tempoNoite": "SOL",
+                            "tempoNoite": "LIMPO",
                             "temperaturaMaxima": "40",
                             "temperaturaMinima": "24",
                             "precipitacao": "30",
