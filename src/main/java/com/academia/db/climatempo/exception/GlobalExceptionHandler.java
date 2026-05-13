@@ -26,9 +26,26 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.BAD_REQUEST, "Erro de validação, há campos inválidos", errors);
     }
 
+    @ExceptionHandler(org.springframework.web.bind.MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponse> handleMissingParams(org.springframework.web.bind.MissingServletRequestParameterException ex) {
+        String msg = String.format("O parâmetro obrigatório '%s' não foi enviado.", ex.getParameterName());
+        return buildResponse(HttpStatus.BAD_REQUEST, msg, null);
+    }
+
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleBusiness(BusinessException ex) {
         return buildResponse(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage(), null);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException ex) {
+        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), null);
+    }
+
+    @ExceptionHandler(org.springframework.web.servlet.NoHandlerFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(org.springframework.web.servlet.NoHandlerFoundException ex) {
+        String msg = String.format("A rota %s não foi encontrada", ex.getRequestURL());
+        return buildResponse(HttpStatus.NOT_FOUND, msg, null);
     }
 
     @ExceptionHandler(Exception.class)
