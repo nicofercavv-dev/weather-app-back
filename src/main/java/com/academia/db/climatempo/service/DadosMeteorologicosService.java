@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +51,17 @@ public class DadosMeteorologicosService {
         }
 
         return entidades.map(mapper::toResponseDTO);
+    }
+
+    public Optional<DadosMeteorologicos> buscarPorId(Long id) {
+        Optional<DadosMeteorologicos> entidade;
+        if (!repository.existsById(id)) {
+            throw new ResourceNotFoundException("Dado de ID " + id + " não existe.");
+        }
+
+        entidade = repository.findById(id);
+
+        return entidade;
     }
 
     public List<DadosMeteorologicosResponseDTO> listarProximosSeteDias(String cidade) {

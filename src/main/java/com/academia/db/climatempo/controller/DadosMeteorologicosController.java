@@ -2,6 +2,7 @@ package com.academia.db.climatempo.controller;
 
 import com.academia.db.climatempo.dto.DadosMeteorologicosRequestDTO;
 import com.academia.db.climatempo.dto.DadosMeteorologicosResponseDTO;
+import com.academia.db.climatempo.model.DadosMeteorologicos;
 import com.academia.db.climatempo.service.DadosMeteorologicosService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/dados-meteorologicos")
@@ -33,6 +35,13 @@ public class DadosMeteorologicosController {
     @Operation(summary = "Listar dados meteorológicos")
     public ResponseEntity<Page<DadosMeteorologicosResponseDTO>> listar(@RequestParam(value = "cidade", required = false) String cidade, Pageable pageable) {
         Page<DadosMeteorologicosResponseDTO> resultado = service.listar(cidade, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(resultado);
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Listar dados meteorológicos")
+    public ResponseEntity<Optional<DadosMeteorologicos>> buscarDadoPorId(@PathVariable Long id) {
+        Optional<DadosMeteorologicos> resultado = service.buscarPorId(id);
         return ResponseEntity.status(HttpStatus.OK).body(resultado);
     }
 
